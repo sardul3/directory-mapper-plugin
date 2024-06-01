@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.sardul3</groupId>
+    <groupId>io.github.sardul3</groupId>
     <artifactId>directory-mapper-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Directory Mapper Maven Plugin</name>
@@ -29,8 +29,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/sardul3/directory-mapper-plugin.git</connection>
-        <developerConnection>scm:git:https://github.com/sardul3/directory-mapper-plugin.git</developerConnection>
+        <connection>scm:git:git:https://github.com/sardul3/directory-mapper-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com/sardul3/directory-mapper-plugin.git</developerConnection>
         <url>https://github.com/sardul3/directory-mapper-plugin/tree/main</url>
     </scm>
 
@@ -145,7 +145,7 @@
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -165,6 +165,46 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <keyname>0x8FC01500</keyname>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.example.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
             </plugin>
         </plugins>
     </build>
