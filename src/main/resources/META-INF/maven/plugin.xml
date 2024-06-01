@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <name>Directory Mapper Plugin</name>
+    <groupId>com.sardul3</groupId>
+    <artifactId>directory-mapper-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <description>A Maven plugin to generate a beautiful text file representing folder structure.</description>
+    <goalPrefix>directory-mapper</goalPrefix>
+    <parameters>
+        <parameter>
+            <name>outputFile</name>
+            <type>String</type>
+            <required>true</required>
+            <description>The output file to write the folder structure to.</description>
+        </parameter>
+        <parameter>
+            <name>excludedFolders</name>
+            <type>String[]</type>
+            <required>false</required>
+            <description>Array of folder names to exclude from expansion.</description>
+        </parameter>
+    </parameters>
+</plugin>
+
+
