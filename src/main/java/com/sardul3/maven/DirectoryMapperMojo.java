@@ -23,12 +23,31 @@ public class DirectoryMapperMojo extends AbstractMojo {
     @Parameter(property = "excludedFolders")
     private String[] excludedFolders;
 
+    @Parameter(property = "packageName")
+    private String packageName;
+
+    @Parameter(property = "generateFolders", defaultValue = "false")
+    private boolean generateFolders;
+
+    @Parameter(property = "createDirectoryMap", defaultValue = "true")
+    private boolean createDirectoryMap;
+
+
     @Override
     public void execute() throws MojoExecutionException {
         String rootPath = System.getProperty("user.dir");
         File root = new File(rootPath);
+        if (generateFolders && packageName == null) {
+            throw new MojoExecutionException("packageName must be specified when generateFolders is true");
+        }
+
         try (FileWriter writer = new FileWriter(outputFile)) {
-            printDirectoryTree(root, 0, writer);
+            if (generateFolders) {
+                generateDirectoryStructure(root, packageName, writer);
+            }
+            if (createDirectoryMap) {
+                printDirectoryTree(root, 0, writer);
+            }
             getLog().info("Folder structure written to " + outputFile);
         } catch (IOException e) {
             getLog().error("An error occurred while writing folder structure", e);
@@ -56,6 +75,35 @@ public class DirectoryMapperMojo extends AbstractMojo {
             }
         } else {
             writer.write(getIndentString(level) + "+-- " + folder.getName() + "\n");
+        }
+    }
+
+    private void generateDirectoryStructure(File root, String packageName, FileWriter writer)
+            throws IOException {
+        File basePackageDir = new File(root, "src/main/java/" + packageName.replace('.', '/'));
+        basePackageDir.mkdirs(); // Ensure base package structure exists
+        createDirectory(basePackageDir, "controller", writer);
+        createDirectory(basePackageDir, "dto/mapper", writer);
+        createDirectory(basePackageDir, "dto/request", writer);
+        createDirectory(basePackageDir, "dto/response", writer);
+        createDirectory(basePackageDir, "exception/errors", writer);
+        createDirectory(basePackageDir, "exception/handlers", writer);
+        createDirectory(basePackageDir, "exception/util", writer);
+        createDirectory(basePackageDir, "model", writer);
+        createDirectory(basePackageDir, "repository", writer);
+        createDirectory(basePackageDir, "service", writer);
+    }
+
+    private void createDirectory(File root, String relativePath, FileWriter writer)
+            throws IOException {
+        String[] folders = relativePath.split("/");
+        File currentDir = root;
+        StringBuilder indent = new StringBuilder();
+        for (String folder : folders) {
+            currentDir = new File(currentDir, folder);
+            currentDir.mkdirs();
+            writer.write(indent.toString() + "+-- " + folder + "/\n");
+            indent.append("|   ");
         }
     }
 
